@@ -9,7 +9,7 @@ to implement a database application
 import mysql.connector
 import pandas as pd
 
-class Follows:
+class DBUtils:
 
     def __init__(self, user, password, database, host="localhost"):
         """ Future work: Implement connection pooling """
