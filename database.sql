@@ -30,3 +30,26 @@ CREATE INDEX idx_tweet_user_ts ON TWEET(user_id, tweet_ts DESC);
 -- For queries finding who a user follows (already covered by PK)
 -- For queries finding followers of a user (reverse lookup)
 CREATE INDEX idx_follows_followee ON FOLLOWS(followee_id, follower_id);
+
+
+LOAD DATA LOCAL INFILE 'tweet.csv'
+INTO TABLE TWEET
+FIELDS TERMINATED BY ','
+ENCLOSED BY '"'
+LINES TERMINATED BY '\n'
+IGNORE 1 ROWS
+(tweet_id, user_id, tweet_ts, tweet_text);
+
+
+LOAD DATA LOCAL INFILE 'follows.csv'
+INTO TABLE FOLLOWS
+FIELDS TERMINATED BY ','
+LINES TERMINATED BY '\n'
+IGNORE 1 ROWS
+(follower_id, followee_id);
+
+SELECT COUNT(*) FROM TWEET;
+SELECT COUNT(*) FROM FOLLOWS;
+SELECT * FROM TWEET LIMIT 5;
+SELECT * FROM FOLLOWS LIMIT 5;
+
