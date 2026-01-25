@@ -14,10 +14,10 @@ class DBUtils:
     def __init__(self, user, password, database, host="localhost"):
         """ Future work: Implement connection pooling """
         self.con = mysql.connector.connect(
-            host="localhost",
-            user="root",
-            password="BillyBobJoe",
-            database="HW"
+            host=host,
+            user=user,
+            password=password,
+            database=database
         )
 
     def close(self):
@@ -58,13 +58,5 @@ class DBUtils:
         cursor.executemany(sql, vals)
         self.con.commit()
 
-    def select(self, sql, vals = None):
-        """ Select row(s) and return a dataframe """
-        cursor = self.con.cursor()
-        cursor.execute(sql, vals)
-        rows = cursor.fetchall()
-        columns = [desc[0] for desc in cursor.description]
-        cursor.close()
-        return pd.DataFrame(rows, columns=columns)
 
 

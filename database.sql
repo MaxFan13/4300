@@ -1,4 +1,5 @@
---CREATE DATABASE data;
+
+CREATE DATABASE IF NOT EXISTS HW;
 
 USE HW;
 
@@ -6,9 +7,9 @@ DROP TABLE IF EXISTS TWEET;
 DROP TABLE IF EXISTS FOLLOWS;
 
 CREATE TABLE TWEET (
-    tweet_id INT PRIMARY KEY,
+    tweet_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
-    tweet_ts DATETIME NOT NULL,
+    tweet_ts DATETIME DEFAULT CURRENT_TIMESTAMP,
     tweet_text VARCHAR(140) NOT NULL
 );
 
@@ -16,40 +17,9 @@ CREATE TABLE FOLLOWS(
     follower_id INT,
     followee_id INT,
     PRIMARY KEY (follower_id, followee_id)
-)
+);
 
-CREATE INDEX idx_tweet_user_id ON TWEET(user_id);
-
--- For queries filtering by timestamp (e.g., recent tweets)
-CREATE INDEX idx_tweet_timestamp ON TWEET(tweet_ts DESC);
-
--- Composite index for user's tweets ordered by time
-CREATE INDEX idx_tweet_user_ts ON TWEET(user_id, tweet_ts DESC);
-
--- Index on FOLLOWS table
--- For queries finding who a user follows (already covered by PK)
--- For queries finding followers of a user (reverse lookup)
-CREATE INDEX idx_follows_followee ON FOLLOWS(followee_id, follower_id);
-
-
-LOAD DATA LOCAL INFILE 'tweet.csv'
-INTO TABLE TWEET
-FIELDS TERMINATED BY ','
-ENCLOSED BY '"'
-LINES TERMINATED BY '\n'
-IGNORE 1 ROWS
-(tweet_id, user_id, tweet_ts, tweet_text);
-
-
-LOAD DATA LOCAL INFILE 'follows.csv'
-INTO TABLE FOLLOWS
-FIELDS TERMINATED BY ','
-LINES TERMINATED BY '\n'
-IGNORE 1 ROWS
-(follower_id, followee_id);
-
-SELECT COUNT(*) FROM TWEET;
-SELECT COUNT(*) FROM FOLLOWS;
-SELECT * FROM TWEET LIMIT 5;
-SELECT * FROM FOLLOWS LIMIT 5;
-
+CREATE INDEX tweet_user ON TWEET(user_id);
+CREATE INDEX tweet_timestamp ON TWEET(tweet_ts DESC); -- Index for timestamp
+CREATE INDEX tweet_user_ts ON TWEET(user_id, tweet_ts DESC); -- Indexes tweets by user and time
+CREATE INDEX follows_followee ON FOLLOWS(followee_id, follower_id);
