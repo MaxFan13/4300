@@ -101,17 +101,22 @@ class TwitterAPI:
             users.append(user)
         return users
 
+    def get_users(self):
+        """ Get all distinct users who follow someone """
+        query = """
+        SELECT DISTINCT follower_id
+        FROM FOLLOWS
+        """
+        df = self.dbu.select(query)
+        return df["follower_id"].tolist()
+
     def get_timeline(self, user_id):
         """ Gets the 10 most recent tweets for a user's home timeline."""
         query = f"""
         SELECT t.tweet_id, t.user_id, t.tweet_ts, t.tweet_text
         FROM TWEET t
-        WHERE t.user_id = {int(user_id)}
-           OR t.user_id IN (
-                SELECT followee_id
-                FROM FOLLOWS
-                WHERE follower_id = {int(user_id)}
-           )
+        LEFT JOIN FOLLOWS f ON t.user_id = f.followee_id AND f.follower_id = {int(user_id)}
+        WHERE t.user_id = {int(user_id)} OR f.follower_id IS NOT NULL
         ORDER BY t.tweet_ts DESC
         LIMIT 10
         """

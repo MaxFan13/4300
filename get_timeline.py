@@ -3,22 +3,10 @@ import time
 from twitter_mysql import TwitterAPI
 
 
-def get_random_user_ids(api):
-    """
-    Get all distinct users who follow someone
-    """
-    query = """
-    SELECT DISTINCT follower_id
-    FROM FOLLOWS
-    """
-    df = api.dbu.select(query)
-    return df["follower_id"].tolist()
-
-
-def benchmark_home_timelines(refreshes=100_000):
+def getHomeTimeline(refreshes=100_000):
     tw = TwitterAPI("root", "BillyBobJoe", "HW", "localhost")
 
-    users = get_random_user_ids(tw)
+    users = tw.get_users()
 
     start = time.time()
 
@@ -41,4 +29,4 @@ def benchmark_home_timelines(refreshes=100_000):
 
 
 if __name__ == "__main__":
-    benchmark_home_timelines()
+    getHomeTimeline()
